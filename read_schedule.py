@@ -52,38 +52,50 @@ class Year:
         teams = {}
         current_day = start
         while current_day < end:
-            for t in self.dates[current_day]:
-                if t in teams:
-                    teams[t] += 1
-                else:
-                    teams[t] = 1
+            if current_day in self.dates:
+                for t in self.dates[current_day]:
+                    if t in teams:
+                        teams[t] += 1
+                    else:
+                        teams[t] = 1
             current_day = current_day.next()
         return teams
 
 y = Year()
 
-with open("schedule.csv", "rb") as f:
+path = "excel/schedule.csv"
+
+with open(path, "rb") as f:
     reader = csv.reader(f, delimiter="\t")
     for i, line in enumerate(reader):
         if i == 0: continue
 
         line = line[0]
-        round, date, location, home, away , result = line.split(',')
+        round, date, location, home, away, result = line.split(',')
 
         mdy, time = date.split(' ')
 
         day, month, year = mdy.split('/')
         d = Date(day, month, year)
+
+        if home == 'LA Clippers': home = 'Los Angeles Clippers'
+        if away == 'LA Clippers': away = 'Los Angeles Clippers'
         y.add(d, [home, away])
 
 
 while True:
-    start_day, start_month, start_year = raw_input("Start date in format: month day year ").split(' ')
-    end_day, end_month, end_year = raw_input("End date (exclusive) in format: month day year ").split(' ')
+    start_day, start_month, start_year = raw_input("Start date in format: day month year ").split(' ')
+    end_day, end_month, end_year = raw_input("End date (exclusive) in format: day month year ").split(' ')
     start_date = Date(start_day, start_month, start_year)
     end_date = Date(end_day, end_month, end_year)
 
     teams = y.quantity(start_date, end_date)
     sorted_teams = sorted(teams.iteritems(), key=itemgetter(1), reverse=True)
+
+    fname = 'files/teams_games_played'
+    open(fname, 'w').close()
+
+    f = open(fname, 'a')
     for team in sorted_teams:
-        print team
+        f.write(str(team) + '\n')
+    f.close()
