@@ -26,6 +26,8 @@ class Player:
         self.fantasy_order = [fgp, ftp, self.threem, \
          self.rebounds, self.assists, self.steals, self.blocks, self.turnovers, \
          self.points]
+        self.fgz = 0
+        self.ftz = 0
 
     '''
     Calculate the number of stats generated in the next x number of games
@@ -43,3 +45,15 @@ class Player:
         for i in range(len(weights)):
             total += weights[i] * self.fantasy_order[i]
         return total
+
+    '''
+    Return relevant fantasy averages
+    '''
+    def averages(self):
+        fantasy = [self.fgz, self.ftz, self.threem, \
+         self.rebounds, self.assists, self.steals, self.blocks, \
+         self.turnovers, self.points]
+        avg = [0.0] * 9
+        for i in range(len(fantasy)):
+            avg[i] = fantasy[i] / self.games
+        return avg
